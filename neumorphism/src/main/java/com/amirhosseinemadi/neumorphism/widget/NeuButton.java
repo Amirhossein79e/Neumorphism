@@ -2,7 +2,6 @@ package com.amirhosseinemadi.neumorphism.widget;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -11,9 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -23,18 +19,13 @@ import com.amirhosseinemadi.neumorphism.R;
 import com.amirhosseinemadi.neumorphism.Utilities;
 
 public class NeuButton extends AppCompatButton implements NeumorphismImpl {
-    //TODO should check gravity
     private DisplayMetrics metrics;
     private boolean isInitDrawn;
-    private boolean isMarginSet;
 
-    private Rect mainRect;
     private RectF backgroundRect;
-    private Rect innerRect;
     private Paint topPaint;
     private Paint bottomPaint;
     private Rect textBounds;
-    private Rect wordBounds;
 
     private float neuElevation;
     private float neuRadius;
@@ -44,12 +35,12 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
 
     public NeuButton(@NonNull Context context) {
         super(context);
-        init(20,24, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
+        init(16,30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
     }
 
     public NeuButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(20,24, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
+        init(24,30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
     }
 
 
@@ -58,13 +49,10 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
         metrics = getContext().getResources().getDisplayMetrics();
         isInitDrawn = false;
 
-        mainRect = new Rect();
         backgroundRect = new RectF();
-        innerRect = new Rect();
         topPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         bottomPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         textBounds = new Rect();
-        wordBounds = new Rect();
 
         setNeuElevation(neuElevation);
         setNeuRadius(neuRadius);
@@ -75,16 +63,44 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
     }
 
 
+    private int calculateDrawableWidth()
+    {
+        int width = 0;
+        Drawable[] relativeDrawable = getCompoundDrawablesRelative();
+
+        for (int i = 0; i < relativeDrawable.length; i++)
+        {
+            if (relativeDrawable[i] != null)
+            {
+                if (i % 2 == 0)
+                {
+                    width += relativeDrawable[i].getMinimumWidth() + getCompoundDrawablePadding();
+                }else
+                {
+                    if (relativeDrawable[1] != null && relativeDrawable[3] != null)
+                    {
+                        width += Math.max(relativeDrawable[1].getMinimumWidth()
+                                ,relativeDrawable[3].getMinimumWidth());
+                    }
+                }
+            }
+        }
+
+        return width;
+    }
+
+
     private int calculateMinWidth(DisplayMetrics metrics, Rect textBounds, int neuElevation)
     {
-        int width;
+        int width = 0;
+
         if (getText().length() > 0)
         {
-            if (textBounds.width() < metrics.widthPixels - neuElevation*2 - Utilities.dpToPx(metrics,24))
+            if (textBounds.width() + calculateDrawableWidth() < metrics.widthPixels - neuElevation*2 - Utilities.dpToPx(metrics,12))
             {
-                if (textBounds.width() + neuElevation*2 + Utilities.dpToPx(metrics,16) >= getSuggestedMinimumWidth())
+                if (textBounds.width() + calculateDrawableWidth() + neuElevation*2 + Utilities.dpToPx(metrics,16) >= getSuggestedMinimumWidth())
                 {
-                    width = (int) (textBounds.width() + neuElevation*2 + Utilities.dpToPx(metrics,32));
+                    width = (int) (textBounds.width() + calculateDrawableWidth() + neuElevation*2 + Utilities.dpToPx(metrics,12));
                 }else
                 {
                     width = getSuggestedMinimumWidth() + neuElevation*2;
@@ -95,7 +111,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
             }
         }else
         {
-            width = getSuggestedMinimumWidth() + neuElevation*2 ;
+            width = Math.max(getSuggestedMinimumWidth() + neuElevation*2, calculateDrawableWidth() + getPaddingStart() + getPaddingRight());
         }
 
         return width;
@@ -108,22 +124,30 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
         if (getText().length() > 0)
         {
             double lines = Math.ceil(textBounds.width() / (double) (metrics.widthPixels - Utilities.dpToPx(metrics,12) - neuElevation*2 - getPaddingLeft() - getPaddingRight()));
-            System.out.println(metrics.widthPixels - Utilities.dpToPx(metrics,12) - neuElevation*2 - getPaddingLeft() - getPaddingRight());
-            if (textBounds.height() * lines < metrics.heightPixels - neuElevation*2)
+
+            if (lines <= 1)
             {
-                if (lines > 1)
-                {
-                    height = (int) (getMinHeight() + getLineHeight() * lines);
-                    System.out.println(textBounds.width());
-                    System.out.println(lines);
-                }else
-                {
-                    height = getSuggestedMinimumHeight() + neuElevation*2;
-                }
+                height = (int) (getMinHeight() + getLineHeight() * lines);
+                System.out.println(textBounds.width());
+                System.out.println(lines);
             }else
             {
-                height = metrics.heightPixels + neuElevation*2;
+                height = 0;
             }
+
+//            if (textBounds.height() * lines < metrics.heightPixels - neuElevation*2)
+//            {
+//                if (lines > 1)
+//                {
+//
+//                }else
+//                {
+//                    height = getSuggestedMinimumHeight() + neuElevation*2;
+//                }
+//            }else
+//            {
+//                height = metrics.heightPixels + neuElevation*2;
+//            }
         }else
         {
             height = getSuggestedMinimumHeight() + neuElevation*2;
@@ -136,30 +160,20 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        int widthSpec;
 
         getPaint().getTextBounds(getText().toString(),0,getText().length(),textBounds);
 
-        if (widthMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.AT_MOST)
+        if (widthMode == MeasureSpec.AT_MOST)
         {
-            if (widthMode == MeasureSpec.AT_MOST && heightMode == MeasureSpec.AT_MOST)
-            {
-                int calculatedWidth = calculateMinWidth(metrics,textBounds,(int) neuElevation);
-                super.onMeasure(MeasureSpec.makeMeasureSpec(calculatedWidth,MeasureSpec.EXACTLY),heightMeasureSpec);
-
-            }else if (widthMode == MeasureSpec.AT_MOST)
-            {
-                setMeasuredDimension(calculateMinWidth(metrics,textBounds,(int) neuElevation), heightSize);
-            }else
-            {
-                setMeasuredDimension(widthSize, calculateMinHeight(metrics,textBounds,(int) neuElevation));
-            }
+            int calculatedWidth = calculateMinWidth(metrics,textBounds,(int) neuElevation);
+            widthSpec = MeasureSpec.makeMeasureSpec(calculatedWidth,MeasureSpec.EXACTLY);
         }else
         {
-            super.onMeasure(widthMeasureSpec,heightMeasureSpec);
+            widthSpec = widthMeasureSpec;
         }
+
+        super.onMeasure(widthSpec,heightMeasureSpec);
     }
 
 
@@ -167,12 +181,10 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
-
-        backgroundRect.set(left + getNeuElevation() + Utilities.dpToPx(metrics,8) - marginParams.leftMargin
-                , top + getNeuElevation() + Utilities.dpToPx(metrics,8)
-                , right - getNeuElevation() - Utilities.dpToPx(metrics,8) - marginParams.leftMargin
-                , bottom - getNeuElevation() - Utilities.dpToPx(metrics,8));
+        backgroundRect.set(0 + getNeuElevation() + Utilities.dpToPx(metrics,8)
+                , 0 + getNeuElevation() + Utilities.dpToPx(metrics,8)
+                , getWidth() - getNeuElevation() - Utilities.dpToPx(metrics,8)
+                , getHeight() - getNeuElevation() - Utilities.dpToPx(metrics,8));
     }
 
 
@@ -180,10 +192,10 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
     {
         topPaint.setStyle(Paint.Style.FILL);
         topPaint.setColor(ContextCompat.getColor(getContext(),getBackgroundColor()));
-        topPaint.setShadowLayer(28f,-getNeuElevation(),-getNeuElevation(),ContextCompat.getColor(getContext(),getTopShadowColor()));
+        topPaint.setShadowLayer(30f,-getNeuElevation(),-getNeuElevation(),ContextCompat.getColor(getContext(),getTopShadowColor()));
         bottomPaint.setStyle(Paint.Style.FILL);
         bottomPaint.setColor(ContextCompat.getColor(getContext(),getBackgroundColor()));
-        bottomPaint.setShadowLayer(28f,+getNeuElevation(),+getNeuElevation(),ContextCompat.getColor(getContext(),getBottomShadowColor()));
+        bottomPaint.setShadowLayer(30f,+getNeuElevation(),+getNeuElevation(),ContextCompat.getColor(getContext(),getBottomShadowColor()));
 
         canvas.drawRoundRect(backgroundRect,getNeuRadius(),getNeuRadius(),topPaint);
         canvas.drawRoundRect(backgroundRect,getNeuRadius(),getNeuRadius(),bottomPaint);
@@ -240,20 +252,20 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
 
     @Override
     public void setPadding(int left, int top, int right, int bottom) {
-        int leftP = (int) (left + neuElevation + Utilities.dpToPx(metrics,8));
-        int topP = (int) (top + neuElevation + Utilities.dpToPx(metrics,8));
-        int rightP = (int) (right + neuElevation + Utilities.dpToPx(metrics,8));
-        int bottomP = (int) (bottom + neuElevation + Utilities.dpToPx(metrics,8));
-        super.setPadding(leftP, topP, rightP, bottomP);
+        left = (int) (left + neuElevation + Utilities.dpToPx(metrics,8));
+        top = (int) (top + neuElevation + Utilities.dpToPx(metrics,8));
+        right = (int) (right + neuElevation + Utilities.dpToPx(metrics,8));
+        bottom = (int) (bottom + neuElevation + Utilities.dpToPx(metrics,8));
+        super.setPadding(left, top, right, bottom);
     }
 
     @Override
     public void setPaddingRelative(int start, int top, int end, int bottom) {
-        int startP = (int) (start + neuElevation + Utilities.dpToPx(metrics,8));
-        int topP = (int) (top + neuElevation + Utilities.dpToPx(metrics,8));
-        int endP = (int) (end + neuElevation + Utilities.dpToPx(metrics,8));
-        int bottomP = (int) (bottom + neuElevation + Utilities.dpToPx(metrics,8));
-        super.setPaddingRelative(startP, topP, endP, bottomP);
+        start = (int) (start + neuElevation + Utilities.dpToPx(metrics,8));
+        top = (int) (top + neuElevation + Utilities.dpToPx(metrics,8));
+        end = (int) (end + neuElevation + Utilities.dpToPx(metrics,8));
+        bottom = (int) (bottom + neuElevation + Utilities.dpToPx(metrics,8));
+        super.setPadding(start, top, end, bottom);
     }
 
     @Override
@@ -261,7 +273,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
         this.neuElevation = elevation;
         if (isInitDrawn)
         {
-            invalidate();
+            requestLayout();
         }
     }
 
