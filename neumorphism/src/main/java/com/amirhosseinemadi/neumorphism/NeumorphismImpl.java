@@ -6,13 +6,13 @@ public interface NeumorphismImpl {
 
     float getNeuElevation();
 
-    void setTopShadowColor(int color);
+    void setLightShadowColor(int color);
 
-    int getTopShadowColor();
+    int getLightShadowColor();
 
-    void setBottomShadowColor(int color);
+    void setDarkShadowColor(int color);
 
-    int getBottomShadowColor();
+    int getDarkShadowColor();
 
     void setNeuRadius(float radius);
 

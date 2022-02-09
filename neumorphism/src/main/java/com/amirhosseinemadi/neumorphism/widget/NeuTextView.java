@@ -3,7 +3,6 @@ package com.amirhosseinemadi.neumorphism.widget;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
@@ -13,7 +12,6 @@ import android.util.DisplayMetrics;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 
@@ -39,13 +37,13 @@ public class NeuTextView extends AppCompatTextView implements NeumorphismImpl {
     public NeuTextView(@NonNull Context context) {
         super(context);
         metrics = getContext().getResources().getDisplayMetrics();
-        init((int) Utilities.dpToPx(metrics,8f),30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
+        init((int) Utilities.dpToPx(metrics,6f),30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
     }
 
     public NeuTextView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         metrics = getContext().getResources().getDisplayMetrics();
-        init((int) Utilities.dpToPx(metrics,8f),30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
+        init((int) Utilities.dpToPx(metrics,6f),30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
     }
 
 
@@ -58,8 +56,8 @@ public class NeuTextView extends AppCompatTextView implements NeumorphismImpl {
 
         setNeuElevation(neuElevation);
         setNeuRadius(neuRadius);
-        setTopShadowColor(topShadowColor);
-        setBottomShadowColor(bottomShadowColor);
+        setLightShadowColor(topShadowColor);
+        setDarkShadowColor(bottomShadowColor);
         setBackgroundColor(backgroundColor);
         setPaddingRelative(0,0,0,0);
     }
@@ -88,10 +86,10 @@ public class NeuTextView extends AppCompatTextView implements NeumorphismImpl {
     {
         topPaint.setStyle(Paint.Style.FILL);
         topPaint.setColor(ContextCompat.getColor(getContext(),getBackgroundColor()));
-        topPaint.setShadowLayer(getNeuElevation()*1.7f,-getNeuElevation(),-getNeuElevation(),ContextCompat.getColor(getContext(),getTopShadowColor()));
+        topPaint.setShadowLayer(getNeuElevation()*1.7f,-getNeuElevation(),-getNeuElevation(),ContextCompat.getColor(getContext(), getLightShadowColor()));
         bottomPaint.setStyle(Paint.Style.FILL);
         bottomPaint.setColor(ContextCompat.getColor(getContext(),getBackgroundColor()));
-        bottomPaint.setShadowLayer(getNeuElevation()*1.7f,+getNeuElevation(),+getNeuElevation(),ContextCompat.getColor(getContext(),getBottomShadowColor()));
+        bottomPaint.setShadowLayer(getNeuElevation()*1.7f,+getNeuElevation(),+getNeuElevation(),ContextCompat.getColor(getContext(), getDarkShadowColor()));
 
         canvas.drawRoundRect(backgroundRect,getNeuRadius(),getNeuRadius(),topPaint);
         canvas.drawRoundRect(backgroundRect,getNeuRadius(),getNeuRadius(),bottomPaint);
@@ -185,7 +183,7 @@ public class NeuTextView extends AppCompatTextView implements NeumorphismImpl {
     }
 
     @Override
-    public void setTopShadowColor(int color) {
+    public void setLightShadowColor(int color) {
         this.topShadowColor = color;
         if (isInitDrawn)
         {
@@ -194,12 +192,12 @@ public class NeuTextView extends AppCompatTextView implements NeumorphismImpl {
     }
 
     @Override
-    public int getTopShadowColor() {
+    public int getLightShadowColor() {
         return topShadowColor;
     }
 
     @Override
-    public void setBottomShadowColor(int color) {
+    public void setDarkShadowColor(int color) {
         this.bottomShadowColor = color;
         if (isInitDrawn)
         {
@@ -208,7 +206,7 @@ public class NeuTextView extends AppCompatTextView implements NeumorphismImpl {
     }
 
     @Override
-    public int getBottomShadowColor() {
+    public int getDarkShadowColor() {
         return bottomShadowColor;
     }
 
