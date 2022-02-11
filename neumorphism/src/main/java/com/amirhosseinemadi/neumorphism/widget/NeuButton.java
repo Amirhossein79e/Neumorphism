@@ -1,6 +1,9 @@
 package com.amirhosseinemadi.neumorphism.widget;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -10,6 +13,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import androidx.annotation.ColorRes;
+import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -19,15 +24,14 @@ import com.amirhosseinemadi.neumorphism.R;
 import com.amirhosseinemadi.neumorphism.Utilities;
 
 public class NeuButton extends AppCompatButton implements NeumorphismImpl {
-    //TODO light source
+
     private final DisplayMetrics metrics;
     private final Utilities utilities;
     private boolean isInitDrawn;
 
     private RectF backgroundRect;
-    private Paint topPaint;
-    private Paint bottomPaint;
-    private Rect textBounds;
+    private Paint lightPaint;
+    private Paint darkPaint;
 
     private float neuElevation;
     private float neuRadius;
@@ -39,31 +43,45 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
         super(context);
         metrics = getContext().getResources().getDisplayMetrics();
         utilities = new Utilities(metrics);
-        init((int) utilities.dpToPx(6f),30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
+
+        neuElevation = utilities.dpToPx(6f);
+        neuRadius = utilities.dpToPx(8f);
+        backgroundColor = R.color.md_grey_100;
+        lightShadowColor = R.color.white;
+        darkShadowColor = R.color.md_grey_300;
+
+        init(neuElevation,neuRadius,backgroundColor,lightShadowColor,darkShadowColor);
     }
 
     public NeuButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         metrics = getContext().getResources().getDisplayMetrics();
         utilities = new Utilities(metrics);
-        init((int) utilities.dpToPx(6f),30, R.color.md_grey_100, R.color.md_white_1000, R.color.md_grey_300);
+
+        TypedArray attrArray = context.obtainStyledAttributes(attrs,R.styleable.NeuButton);
+        neuElevation = attrArray.getDimension(R.styleable.NeuButton_neu_elevation,(int) utilities.dpToPx(6f));
+        neuRadius = attrArray.getDimension(R.styleable.NeuButton_neu_radius,utilities.dpToPx(8f));
+        backgroundColor = attrArray.getColor(R.styleable.NeuButton_neu_background_color,ContextCompat.getColor(getContext(),R.color.md_grey_100));
+        lightShadowColor = attrArray.getColor(R.styleable.NeuButton_neu_light_shadow_color,ContextCompat.getColor(getContext(),R.color.white));
+        darkShadowColor = attrArray.getColor(R.styleable.NeuButton_neu_dark_shadow_color,ContextCompat.getColor(getContext(),R.color.md_grey_300));
+        attrArray.recycle();
+
+        init(neuElevation,neuRadius,backgroundColor,lightShadowColor,darkShadowColor);
     }
 
 
-    private void init(int neuElevation, int neuRadius, int backgroundColor, int topShadowColor, int bottomShadowColor)
+    private void init(float elevation, float radius, int backgroundColor, int lightShadowColor, int darkShadowColor)
     {
-        isInitDrawn = false;
         backgroundRect = new RectF();
-        topPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        bottomPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textBounds = new Rect();
+        lightPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        darkPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
-        setNeuElevation(neuElevation);
-        setNeuRadius(neuRadius);
-        setLightShadowColor(topShadowColor);
-        setDarkShadowColor(bottomShadowColor);
+        setNeuElevation(elevation);
+        setNeuRadius(radius);
         setBackgroundColor(backgroundColor);
-        setPaddingRelative(0,0,0,0);
+        setLightShadowColor(lightShadowColor);
+        setDarkShadowColor(darkShadowColor);
+        setPaddingRelative(getPaddingStart(),getPaddingTop(),getPaddingEnd(),getPaddingBottom());
     }
 
 
@@ -160,7 +178,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
 
         if (textBounds.width() > 0)
         {
-            int masterWidth = (int) (textBounds.width() + utilities.dpToPx(24) + calculateDrawableWidth() + getCompoundDrawablePadding() + neuElevation*5);
+            int masterWidth = (int) (textBounds.width() + utilities.dpToPx(4) + calculateDrawableWidth() + getCompoundDrawablePadding() + neuElevation*5);
 
             if (masterWidth < getSuggestedMinimumWidth() + neuElevation*5)
             {
@@ -207,7 +225,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
 
         if (getText().length() > 0)
         {
-            int masterLineWidth = (int) (metrics.widthPixels - neuElevation*5 - utilities.dpToPx(24) - calculateDrawableWidth());
+            int masterLineWidth = (int) (metrics.widthPixels - neuElevation*5 - utilities.dpToPx(4) - calculateDrawableWidth());
 
             if (textBounds.width() > masterLineWidth)
             {
@@ -251,6 +269,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+
         if (calculateDrawableWidth() <= 0)
         {
             setMinWidth((int) (getSuggestedMinimumWidth() + neuElevation*5));
@@ -261,6 +280,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
             setMinWidth((int) (getSuggestedMinimumWidth() + neuElevation*5));
             setMinHeight((int) (getSuggestedMinimumHeight() + neuElevation*5));
         }
+
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
@@ -269,10 +289,10 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
 
-        backgroundRect.set(0 + neuElevation * 2.5f
-                , 0 + neuElevation * 2.5f
-                , getWidth() - neuElevation * 2.5f
-                , getHeight() - neuElevation * 2.5f);
+        backgroundRect.set(0 + neuElevation * 2.7f
+                , 0 + neuElevation * 2.7f
+                , getWidth() - neuElevation * 2.7f
+                , getHeight() - neuElevation * 2.7f);
     }
 
 
@@ -282,16 +302,16 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
      */
     private void drawBackground(Canvas canvas)
     {
-        topPaint.setStyle(Paint.Style.FILL);
-        topPaint.setColor(ContextCompat.getColor(getContext(),backgroundColor));
-        topPaint.setShadowLayer(neuElevation*1.7f,-neuElevation,-neuElevation,ContextCompat.getColor(getContext(), lightShadowColor));
+        lightPaint.setStyle(Paint.Style.FILL);
+        lightPaint.setColor(backgroundColor);
+        lightPaint.setShadowLayer(neuElevation*2.1f,-neuElevation,-neuElevation,lightShadowColor);
 
-        bottomPaint.setStyle(Paint.Style.FILL);
-        bottomPaint.setColor(ContextCompat.getColor(getContext(),backgroundColor));
-        bottomPaint.setShadowLayer(neuElevation*1.7f,+neuElevation,+neuElevation,ContextCompat.getColor(getContext(), darkShadowColor));
+        darkPaint.setStyle(Paint.Style.FILL);
+        darkPaint.setColor(backgroundColor);
+        darkPaint.setShadowLayer(neuElevation*2.1f,+neuElevation,+neuElevation,darkShadowColor);
 
-        canvas.drawRoundRect(backgroundRect,neuRadius,neuRadius,topPaint);
-        canvas.drawRoundRect(backgroundRect,neuRadius,neuRadius,bottomPaint);
+        canvas.drawRoundRect(backgroundRect,neuRadius,neuRadius, lightPaint);
+        canvas.drawRoundRect(backgroundRect,neuRadius,neuRadius, darkPaint);
     }
 
 
@@ -299,7 +319,6 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
     protected void onDraw(Canvas canvas) {
         drawBackground(canvas);
         isInitDrawn = true;
-
         canvas.clipRect(backgroundRect);
         super.onDraw(canvas);
     }
@@ -312,47 +331,20 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
      * @param background background drawable for view
      */
     @Override
+    @SuppressLint("ResourceType")
     public void setBackground(Drawable background) {
         if (background instanceof ColorDrawable)
         {
-            setBackgroundColor(((ColorDrawable) background).getColor());
+            setNeuBackgroundColor(((ColorDrawable) background).getColor());
         }else if (background instanceof ShapeDrawable)
         {
-            setBackgroundColor(((ShapeDrawable) background).getPaint().getColor());
+            setNeuBackgroundColor(((ShapeDrawable) background).getPaint().getColor());
         }
     }
 
     @Override
     public Drawable getBackground() {
         return new ColorDrawable(backgroundColor);
-    }
-
-    @Override
-    public void setBackgroundColor(int color) {
-        this.backgroundColor = color;
-        if (isInitDrawn)
-        {
-            invalidate();
-        }
-    }
-
-    /**
-     * @return background color of view
-     */
-    public int getBackgroundColor() {
-        return backgroundColor;
-    }
-
-    @Override
-    public void setMinWidth(int minPixels) {
-        minPixels = (int) Math.max(minPixels, getSuggestedMinimumWidth() + neuElevation*5);
-        super.setMinWidth(minPixels);
-    }
-
-    @Override
-    public void setMinHeight(int minPixels) {
-        minPixels = (int) Math.max(minPixels, getSuggestedMinimumHeight() + neuElevation*5);
-        super.setMinHeight(minPixels);
     }
 
     @Override
@@ -373,34 +365,36 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
         super.setPadding(start, top, end, bottom);
     }
 
-    @Override
-    public int getPaddingTop() {
-        return (int) (super.getPaddingTop() - neuElevation*2.5 - utilities.dpToPx(2));
+    /**
+     * @return Padding top of view minus default padding
+     */
+    public int getNuePaddingTop()
+    {
+        return (int) (getPaddingTop() - neuElevation*2.5 - utilities.dpToPx(2));
     }
 
-    @Override
-    public int getPaddingStart() {
-        return (int) (super.getPaddingStart() - neuElevation*2.5 - utilities.dpToPx(2));
+    /**
+     * @return Padding start of view minus default padding
+     */
+    public int getNuePaddingStart()
+    {
+        return (int) (getPaddingStart() - neuElevation*2.5 - utilities.dpToPx(2));
     }
 
-    @Override
-    public int getPaddingEnd() {
-        return (int) (super.getPaddingEnd() - neuElevation*2.5 - utilities.dpToPx(2));
+    /**
+     * @return Padding end of view minus default padding
+     */
+    public int getNuePaddingEnd()
+    {
+        return (int) (getPaddingEnd() - neuElevation*2.5 - utilities.dpToPx(2));
     }
 
-    @Override
-    public int getPaddingLeft() {
-        return (int) (super.getPaddingLeft() - neuElevation*2.5 - utilities.dpToPx(2));
-    }
-
-    @Override
-    public int getPaddingRight() {
-        return (int) (super.getPaddingRight() - neuElevation*2.5 - utilities.dpToPx(2));
-    }
-
-    @Override
-    public int getPaddingBottom() {
-        return (int) (super.getPaddingBottom() - neuElevation*2.5 - utilities.dpToPx(2));
+    /**
+     * @return Padding bottom of view minus default padding
+     */
+    public int getNuePaddingBottom()
+    {
+        return (int) (getPaddingBottom() - neuElevation*2.5 - utilities.dpToPx(2));
     }
 
     /**
@@ -408,7 +402,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
      * @param elevation
      */
     @Override
-    public void setNeuElevation(float elevation) {
+    public void setNeuElevation(@Dimension float elevation) {
         this.neuElevation = elevation;
         if (isInitDrawn)
         {
@@ -425,12 +419,46 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
     }
 
     /**
-     * Set light shadow color for the view
-     * @param color light shadow color
+     * This function set background color for the view
+     * @param color ResourceColor background color
      */
     @Override
-    public void setLightShadowColor(int color) {
-        this.lightShadowColor = color;
+    public void setNeuBackgroundColor(@ColorRes int color) {
+        try
+        {
+            this.backgroundColor = ContextCompat.getColor(getContext(),color);
+        }catch (Resources.NotFoundException exception)
+        {
+            this.backgroundColor = color;
+        }
+        if (isInitDrawn)
+        {
+            invalidate();
+        }
+    }
+
+    /**
+     * @return background color
+     */
+    @Override
+    public int getNeuBackgroundColor() {
+        return backgroundColor;
+    }
+
+    /**
+     * Set light shadow color for the view
+     * @param color light shadow color res
+     */
+    @Override
+    public void setLightShadowColor(@ColorRes  int color) {
+        try
+        {
+            this.lightShadowColor = ContextCompat.getColor(getContext(),color);
+        }catch (Resources.NotFoundException exception)
+        {
+            this.lightShadowColor = color;
+        }
+
         if (isInitDrawn)
         {
             invalidate();
@@ -447,11 +475,18 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
 
     /**
      * Set dark shadow color for the view
-     * @param color dark shadow color
+     * @param color dark shadow color res
      */
     @Override
-    public void setDarkShadowColor(int color) {
-        this.darkShadowColor = color;
+    public void setDarkShadowColor(@ColorRes int color) {
+        try
+        {
+            this.darkShadowColor = ContextCompat.getColor(getContext(),color);
+        }catch (Resources.NotFoundException exception)
+        {
+            this.darkShadowColor = color;
+        }
+
         if (isInitDrawn)
         {
             invalidate();
@@ -471,7 +506,7 @@ public class NeuButton extends AppCompatButton implements NeumorphismImpl {
      * @param radius radius value in pixel
      */
     @Override
-    public void setNeuRadius(float radius) {
+    public void setNeuRadius(@Dimension float radius) {
         this.neuRadius = radius;
         if (isInitDrawn)
         {

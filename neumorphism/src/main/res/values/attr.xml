@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="NeuButton">
 
+    <attr name="neu_elevation" format="dimension"> </attr>
+    <attr name="neu_radius" format="dimension"> </attr>
+    <attr name="neu_dark_shadow_color" format="color"> </attr>
+    <attr name="neu_light_shadow_color" format="color"> </attr>
+    <attr name="neu_background_color" format="color"> </attr>
+
+    <declare-styleable name="NeuTextView">
+        <attr name="neu_elevation"> </attr>
+        <attr name="neu_radius"> </attr>
+        <attr name="neu_dark_shadow_color"> </attr>
+        <attr name="neu_light_shadow_color"> </attr>
+        <attr name="neu_background_color"> </attr>
     </declare-styleable>
+
+    <declare-styleable name="NeuButton">
+        <attr name="neu_elevation"> </attr>
+        <attr name="neu_radius"> </attr>
+        <attr name="neu_dark_shadow_color"> </attr>
+        <attr name="neu_light_shadow_color"> </attr>
+        <attr name="neu_background_color"> </attr>
+    </declare-styleable>
+
+    <declare-styleable name="NeuImageView">
+        <attr name="neu_elevation"> </attr>
+        <attr name="neu_radius"> </attr>
+        <attr name="neu_dark_shadow_color"> </attr>
+        <attr name="neu_light_shadow_color"> </attr>
+        <attr name="neu_background_color"> </attr>
+    </declare-styleable>
+
 </resources>

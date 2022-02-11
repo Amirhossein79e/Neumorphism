@@ -6,6 +6,10 @@ public interface NeumorphismImpl {
 
     float getNeuElevation();
 
+    void setNeuBackgroundColor(int color);
+
+    int getNeuBackgroundColor();
+
     void setLightShadowColor(int color);
 
     int getLightShadowColor();
