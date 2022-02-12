@@ -7,6 +7,14 @@
     <attr name="neu_light_shadow_color" format="color"> </attr>
     <attr name="neu_background_color" format="color"> </attr>
 
+    <declare-styleable name="NeuCardView">
+        <attr name="neu_elevation"> </attr>
+        <attr name="neu_radius"> </attr>
+        <attr name="neu_dark_shadow_color"> </attr>
+        <attr name="neu_light_shadow_color"> </attr>
+        <attr name="neu_background_color"> </attr>
+    </declare-styleable>
+
     <declare-styleable name="NeuTextView">
         <attr name="neu_elevation"> </attr>
         <attr name="neu_radius"> </attr>
