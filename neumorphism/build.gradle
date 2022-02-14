@@ -48,7 +48,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.amirhosseinemadi'
                 artifactId = 'neumorphism'
-                version = '1.2'
+                version = '1.3'
             }
         }
     }
