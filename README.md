@@ -15,5 +15,5 @@ Add it in your root build.gradle(project level) at the end of repositories:
 Step 2. Add the dependency in build.gradle(module level)
 
 	dependencies {
-	        implementation 'com.github.Amirhossein79e:Neumorphism:1.1'
+	        implementation 'com.github.Amirhossein79e:Neumorphism:1.4'
 	}
