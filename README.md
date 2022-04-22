@@ -8,7 +8,7 @@
 
 Dark mode            |  Light mode
 :------------------------:|:------------------------:
-<img align="left" width="383" height="215" src="https://github.com/Amirhossein79e/Neumorphism/blob/4102ea9e55b5dcc1498576c45ee0ec425c00428a/Screenshot%202022-02-26%20054319%20(1).png" /> | <img align="right" width="383" height="215" src="https://github.com/Amirhossein79e/Neumorphism/blob/4102ea9e55b5dcc1498576c45ee0ec425c00428a/Screenshot%202022-02-26%20055008.png" />
+<img align="left" width="auto" height="auto" src="https://github.com/Amirhossein79e/Neumorphism/blob/4102ea9e55b5dcc1498576c45ee0ec425c00428a/Screenshot%202022-02-26%20054319%20(1).png" /> | <img align="right" width="auto" height="auto" src="https://github.com/Amirhossein79e/Neumorphism/blob/4102ea9e55b5dcc1498576c45ee0ec425c00428a/Screenshot%202022-02-26%20055008.png" />
 
 ### How to add to project: <br/> ###
 
