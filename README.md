@@ -21,13 +21,13 @@ __Step 1.__  Add it in your root build.gradle(project level) at the end of repos
 		}
 	}
 	
-__Step 2.__ Add the dependency in build.gradle(module level)
+__Step 2.__ Add the dependency in build.Gradle(module-level)
 
 	dependencies {
 	        implementation 'com.github.Amirhossein79e:Neumorphism:1.4'
 	}
 
-After you added library to your project follow below steps
+After you added the library to your project follow the below steps
 
 ### How to add to project: <br/> ###
 
@@ -39,7 +39,7 @@ This library have 3 views currently:
 2.`NeuTextView` same as AppCompatTextView<br/>
 3.`NeuButton` same as AppCompatButton<br/>
 
-The attributes you should specify them, if you don't use them then the view use default value defined in library :
+The attributes you should specify, if you don't use them then the view use the default value defined in the library :
 
 1. `app:neu_background_color="solid color"` : <br/>
 This attr set the solid background color for the view. currently not support gradient.
@@ -54,9 +54,9 @@ This attr set a color for the dark shadow color of view.
 This attr set elevation for the view and acts like the CardView `card_elevation` attr. whatever it be larger shadows around the view will be larger.
 
 5. `app:neu_radius="dimension"` :<br/>
-This attr set corner radius for the view and acts like the CardView `card_corner_radius` attr. whatever it be larger bounds of the view will be more rounded.
+This attr set the corner radius for the view and acts like the CardView `card_corner_radius` attr. whatever it be larger bounds of the view will be more rounded.
 
-in below we have a example usage of the `NeuCardView` in ConstraintLayout .
+below we have an example usage of the `NeuCardView` in ConstraintLayout.
 
 	<androidx.constraintlayout.widget.ConstraintLayout
 	    xmlns:android="http://schemas.android.com/apk/res/android"
@@ -85,5 +85,5 @@ in below we have a example usage of the `NeuCardView` in ConstraintLayout .
 
 	</androidx.constraintlayout.widget.ConstraintLayout>
 	
-__I Hope this library help you__
+__I Hope this library helps you__
 
